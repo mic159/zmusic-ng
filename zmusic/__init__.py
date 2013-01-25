@@ -1,14 +1,10 @@
-#!/usr/bin/env python
-
-from flask import Flask
+from pkg_resources import resource_filename
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
-import os
-import sys
-import pkgutil
+from flask import Flask
 
 app = Flask(__name__)
-app.config.from_pyfile(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../app.cfg'))
+app.config.from_pyfile(resource_filename('zmusic', 'app.cfg'))
 
 db = SQLAlchemy(app)
 
@@ -17,3 +13,6 @@ import zmusic.login
 login_manager.setup_app(app)
 
 import zmusic.endpoints
+
+def main():
+	app.run()
