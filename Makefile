@@ -3,11 +3,10 @@ include server.cfg
 .PHONY: all clean upload deploy update-collection
 
 all:
-	@$(MAKE) -C frontend
+	@$(MAKE) -C zmusic/frontend
 
 clean:
-	@$(MAKE) -C frontend clean
-	@$(MAKE) -C backend clean
+	@$(MAKE) -C zmusic/frontend clean
 
 upload: all
 	@echo "    RSYNC   $(SERVER):$(SERVER_UPLOAD_PATH)"

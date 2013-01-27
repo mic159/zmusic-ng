@@ -8,15 +8,16 @@ setup( name = 'zmusic-ng'
 	 , description = 'ZX2C4 Music provides a web interface for playing and downloading music files using metadata.'
 	 , license = 'GPLv2'
 
-	 , packages = find_packages('backend')
+	 , packages = find_packages()
 	 , package_data = {
-	 	'zmusic': [ 'frontend/**/*.js'
-	 			  , 'frontend/**/*.css'
+		'zmusic': [ 'frontend/js/scripts.min.js'
+				  , 'frontend/css/styles.min.css'
 	 			  , 'frontend/index.html'
 	 			  , 'frontend/stats.html'
 	 			  , 'frontend/robots.txt'
 	 			  , 'frontend/favicon.ico'
 	 			  , 'frontend/font/*'
+				  , 'app.cfg'
 	 			  ]
 	 }
 	 , entry_points = {
