@@ -52,7 +52,7 @@ The source may be downloaded using `git`:
 
 ## Building
 
-The entire project is built using standard makefiles:
+The JS and CSS needs to be minified and compiled before installing. To do this, use the makefile:
 
     zmusic-ng $ make
 
@@ -126,15 +126,14 @@ All end points that require a logged in user may use the cookie set by `/login`.
 ## Configuration
 ### Frontend
 
-The frontend should be relatively straight forward to customize. Change the title of the project in `frontend/index.html`, and change the default randomly selected search queries in `frontend/js/app.js`. A more comprehensible configuration system might be implemented at some point, but these two tweaks are easy enough that for now it will suffice.
+The frontend should be relatively straight forward to customize. Change the title of the project in `zmusic/frontend/index.html`, and change the default randomly selected search queries in `zmusic/frontend/js/app.js`. A more comprehensible configuration system might be implemented at some point, but these two tweaks are easy enough that for now it will suffice.
 
 ### <a name="backendconfig"></a>Backend
 
-The backend is configured by modifying the entries in `backend/app.cfg`. Valid configuration options are:
+The backend is configured by modifying the entries in `zmusic/app.cfg`. Valid configuration options are:
 
 * SQLAlchemy keys: The keys listed [on the Flask-SQLAlchemy configuration page](http://packages.python.org/Flask-SQLAlchemy/config.html), with `SQLALCHEMY_DATABASE_URI` being of particular note.
 * Flask keys: The keys listed [on the Flask configuration page](http://flask.pocoo.org/docs/config/#builtin-configuration-values). Be sure to change `SECRET_KEY` and set `DEBUG` to `False` for deployment.
-* `STATIC_PATH`: The relative path of the frontend directory from the backend directory. The way this package is shipped, the default value of `../frontend` is best.
 * `MUSIC_PATH`: The path of a directory tree containing music files you'd like to be served.
 * `ACCEL_STATIC_PREFIX`: By default `False`, but if set to a path, this path is used as a prefix for fetching static files via nginx's `X-Accel-Redirect`. nginx must be configured correctly for this to work.
 * `ACCEL_MUSIC_PREFIX`:  By default `False`, but if set to a path, this path is used as a prefix for fetching music files via nginx's `X-Accel-Redirect`. nginx must be configured correctly for this to work.
@@ -144,19 +143,26 @@ The backend is configured by modifying the entries in `backend/app.cfg`. Valid c
 ## Deployment
 ### <a name="standalone"></a>Running Standalone
 
-By far the easiest way to run the application is standalone. Simply execute `backend/local_server.py` to start a local instance using the built-in Werkzeug server. This server is not meant for production. Be sure to [configure the usernames and music directory first](#backendconfig).
+By far the easiest way to run the application is standalone.
+First build the CSS and JS if you havent already
 
-    zmusic-ng $ backend/local_server.py
+    make
+
+Make sure you have configured the [usernames and music directory](#backendconfig).
+When you are ready to go:
+
+    $ pip install .
+    $ zmusic-ng
     * Running on http://127.0.0.1:5000/
     * Restarting with reloader
 
-The collection may be scanned using the admin credentials:
+Then create the database and scan the music directory using the admin credentials:
 
-    zmusic-ng $  curl http://127.0.0.1:5000/scan?username=ADMIN_USER&password=ADMIN_PASSWORD
+    $ curl http://127.0.0.1:5000/scan?username=ADMIN_USER&password=ADMIN_PASSWORD
 
 And then the site may be viewed in the browser:
 
-    zmusic-ng $ chromium http://127.0.0.1:5000/
+    $ chromium http://127.0.0.1:5000/
 
 The built-in debugging server cannot handle concurrent requests, unfortuantely. To more robustly serve standalone, read on to running standalone with uwsgi.
 
@@ -164,7 +170,8 @@ The built-in debugging server cannot handle concurrent requests, unfortuantely. 
 
 The built-in Werkzeug server is really only for debugging, and cannot handle more than one request at a time. This means that, for example, one cannot listen to music and query for music at the same time. Fortunately, it is easy to use uwsgi without the more complicated nginx setup (described below) in a standalone mode:
 
-    zmusic-ng $ uwsgi --chdir backend/ -w zmusic:app --http-socket 0.0.0.0:5000
+    $ pip install uwsgi
+    $ uwsgi -w zmusic:app --http-socket 0.0.0.0:5000
 
 Depending on your distro, you may need to add `--plugins python27` or similar.
 
@@ -185,9 +192,9 @@ The `server.cfg` configuration file controls the revelent paths for this command
 
 ### nginx / uwsgi
 
-Deployment to nginx requires use of [uwsgi](http://projects.unbit.it/uwsgi/). A sample configuration file can be found in `backend/nginx.conf`. Make note of the paths used for the `/static/` and `/music/` directories. These should be absolute paths to those specified in `backend/app.cfg` as `STATIC_PATH` and `MUSIC_PATH`.
+Deployment to nginx requires use of [uwsgi](http://projects.unbit.it/uwsgi/). A sample configuration file can be found in `backend/nginx.conf`. Make note of the paths used for the `/music/` directories. These should be absolute paths to those specified in `backend/app.cfg` as `STATIC_PATH` and `MUSIC_PATH`.
 
-uwsgi should be run with the `-w zmusic:app` switch, possibly using `--chdir` to change directory to the `backend/` directory, if not already there.
+uwsgi should be run with the `-w zmusic:app` switch.
 
 For easy deployment, the makefile has some deployment targets, which are configured by the `server.cfg` configuration file. These keys should be set:
 
