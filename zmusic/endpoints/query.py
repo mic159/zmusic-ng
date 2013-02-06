@@ -1,12 +1,8 @@
-from zmusic import app
 from zmusic.login import login_required
 from zmusic.database import Song
 from flask import request, jsonify
 import shlex
 
-@app.route('/query', defaults={ "query": "" })
-@app.route('/query/', defaults={ "query": "" })
-@app.route('/query/<path:query>')
 @login_required
 def query(query):
 	offset = request.args.get("offset", 0, int)

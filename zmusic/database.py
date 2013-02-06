@@ -1,6 +1,8 @@
-from zmusic import db
 from uuid import uuid4
 import time
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
 
 # This is indeed ugly, but it was suggested by the SQLAlchemy documention
 # verbatim as a way of dealing with str-centric apps.

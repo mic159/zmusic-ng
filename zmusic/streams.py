@@ -1,7 +1,6 @@
-from flask import Response, request
+from flask import Response, request, current_app as app
 from werkzeug.wsgi import FileWrapper
 from werkzeug.datastructures import Headers
-from zmusic import app
 import subprocess
 import os
 import re

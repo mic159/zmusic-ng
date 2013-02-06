@@ -1,12 +1,9 @@
-from zmusic import app
-from flask import Response, send_from_directory
+from flask import Response, send_from_directory, current_app as app
 from pkg_resources import resource_filename
 from mimetypes import guess_type
 import os
 
-@app.route('/', defaults={ "filename": "index.html" })
-@app.route('/<path:filename>')
-def index(filename):
+def serve_static(filename):
 	static_dir = resource_filename('zmusic', 'frontend')
 	if app.config["ACCEL_STATIC_PREFIX"]:
 		mimetype = None

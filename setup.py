@@ -22,7 +22,7 @@ setup( name = 'zmusic-ng'
 	 }
 	 , entry_points = {
 	 	'console_scripts': [
-	 		'zmusic-ng = zmusic:main',
+			'zmusic-ng = zmusic.app:main',
 	 	]
 	 }
 	 , install_requires = 

@@ -1,20 +1,18 @@
 from zmusic.login import admin_required
-from zmusic import app, db
-from zmusic.database import Song
+from zmusic.database import db, Song
 from zmusic.picard.formats import open as readtags
 from zmusic.picard.util import encode_filename
-from flask import Response
+from flask import Response, current_app as app
 import time
 import os
 
-@app.route('/scan')
 @admin_required
 def scan_music():
 	db.create_all();
-	def do_scan():
+	def do_scan(root_path):
 		yield "%i | Begin.\n" % int(time.time())
 		all_files = {}
-		for root, dirs, files in os.walk(unicode(app.config["MUSIC_PATH"])):
+		for root, dirs, files in os.walk(unicode(root_path)):
 			if len(files) != 0:
 				yield "%i | Scanning [%s].\n" % (int(time.time()), encode_filename(root))
 			for name in files:
@@ -43,7 +41,7 @@ def scan_music():
 				yield "%i | Removing [%s].\n" % (int(time.time()), encode_filename(song.filename))
 		db.session.commit()
 		yield "%i | Done.\n" % int(time.time())
-	response = Response(do_scan(), mimetype="text/plain", direct_passthrough=True)
+	response = Response(do_scan(app.config["MUSIC_PATH"]), mimetype="text/plain", direct_passthrough=True)
 	response.headers.add("X-Accel-Buffering", "no")
 	response.cache_control.no_cache = True
 	return response

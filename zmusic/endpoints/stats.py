@@ -1,11 +1,8 @@
-from zmusic import app, db
-from zmusic.database import Download
+from zmusic.database import Download, db
 from zmusic.login import admin_required
 from flask import jsonify
 import socket
 
-@app.route('/stats')
-@app.route('/stats/')
 @admin_required
 def stats_all_ips():
 	ips = []
@@ -21,7 +18,6 @@ def stats_all_ips():
 	response.cache_control.no_cache = True
 	return response
 
-@app.route('/stats/<ip>')
 @admin_required
 def stats_for_ip(ip):
 	songlist = []

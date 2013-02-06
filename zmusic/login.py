@@ -1,7 +1,10 @@
-from zmusic import app, login_manager
+from flask_login import LoginManager
 from flask_login import current_user, UserMixin
-from flask import request, abort
+from flask import request, abort, current_app as app
 from functools import wraps
+
+
+login_manager = LoginManager()
 
 class User(UserMixin):
 	def __init__(self, id, admin=False):

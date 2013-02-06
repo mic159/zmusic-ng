@@ -1,6 +1,5 @@
-from zmusic import app, db
 from zmusic.login import login_required
-from zmusic.database import Song, Download
+from zmusic.database import Song, Download, db
 from zmusic.filename import generate_download_filename
 from flask import Response, request
 from zlib import crc32 as crc32sum
@@ -8,7 +7,6 @@ from struct import pack
 import time
 import os
 
-@app.route('/zip', methods=['POST'])
 @login_required
 def zipfile():
 	hashes = request.form.getlist("hash", str)
