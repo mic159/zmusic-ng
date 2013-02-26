@@ -22,13 +22,15 @@ setup( name = 'zmusic-ng'
 	 }
 	 , entry_points = {
 	 	'console_scripts': [
-			'zmusic-ng = zmusic.app:main',
+			  'zmusic-ng = zmusic.app:main'
+			, 'zmusic-ng-new-database = zmusic.cli:create_db'
 	 	]
 	 }
 	 , install_requires = 
 	 	[ 'flask'
 	 	, 'flask-login'
 	 	, 'flask-sqlalchemy'
+	 	, 'flask-admin'
 	 	, 'mutagen'
 	 	]
 )

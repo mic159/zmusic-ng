@@ -13,6 +13,30 @@ class CoerceUTF8(db.TypeDecorator):
 			value = value.decode('utf-8')
 		return value
 
+class User(db.Model):
+	__tablename__ = 'users'
+	id = db.Column(db.Integer, primary_key=True)
+	username = db.Column(db.String(80), unique=True, index=True)
+	password = db.Column(db.String(64))
+	is_admin = db.Column(db.Boolean(), default=False)
+
+	# Flask-Login integration
+	def is_authenticated(self):
+		return True
+
+	def is_active(self):
+		return True
+
+	def is_anonymous(self):
+		return False
+
+	def get_id(self):
+		return self.id
+
+	# Required for administrative interface
+	def __unicode__(self):
+		return self.username
+
 class Song(db.Model):
 	__tablename__ = 'songs'
 

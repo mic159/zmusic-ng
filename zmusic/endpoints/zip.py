@@ -1,13 +1,13 @@
-from zmusic.login import login_required
 from zmusic.database import Song, Download, db
 from zmusic.filename import generate_download_filename
 from flask import Response, request
+from flask.ext import login
 from zlib import crc32 as crc32sum
 from struct import pack
 import time
 import os
 
-@login_required
+@login.login_required
 def zipfile():
 	hashes = request.form.getlist("hash", str)
 	if len(hashes) == 0:

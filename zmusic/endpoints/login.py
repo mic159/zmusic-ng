@@ -1,24 +1,40 @@
-from zmusic.login import query_is_music_user, query_is_admin_user, login_required, music_user, admin_user
-from flask_login import current_user, login_user, logout_user
-from flask import jsonify, request
+from flask import request, redirect, url_for
+from flask.ext import admin, wtf, login
+from zmusic.database import db, User
 
-def login():
-	success = False
-	if query_is_music_user(request.form):
-		success = login_user(music_user, remember=True)
-	elif query_is_admin_user(request.form):
-		success = login_user(admin_user, remember=True)
-	response = jsonify(loggedin=success)
-	response.cache_control.no_cache = True
-	return response
+# Define login and registration forms (for flask-login)
+class LoginForm(wtf.Form):
+	username = wtf.TextField(validators=[wtf.required()])
+	password = wtf.PasswordField(validators=[wtf.required()])
 
-def login_check():
-	response = jsonify(loggedin=current_user.is_authenticated())
-	response.cache_control.no_cache = True
-	return response
+	def validate_login(self, field):
+		user = self.get_user()
 
-@login_required
-def logout():
-	response = jsonify(loggedout=logout_user())
-	response.cache_control.no_cache = True
-	return response
+		if user is None:
+			raise wtf.ValidationError('Invalid user')
+
+		if user.password != self.password.data:
+			raise wtf.ValidationError('Invalid password')
+
+	def get_user(self):
+		return db.session.query(User).filter_by(username=self.username.data).first()
+
+class Login(admin.BaseView):
+	def is_accessible(self):
+		return not login.current_user.is_authenticated()
+	@admin.expose(methods=('GET', 'POST'))
+	def index(self):
+		form = LoginForm(request.form)
+		if form.validate_on_submit():
+			user = form.get_user()
+			login.login_user(user)
+			return redirect(url_for('home.index'))
+		return self.render('login.html', form=form)
+
+class Logout(admin.BaseView):
+	def is_accessible(self):
+		return login.current_user.is_authenticated()
+	@admin.expose()
+	def index(self):
+		login.logout_user()
+		return redirect(url_for('home.index'))

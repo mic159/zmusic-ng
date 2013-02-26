@@ -1,9 +1,9 @@
 from zmusic.database import Download, db
-from zmusic.login import admin_required
+from flask.ext import login
 from flask import jsonify
 import socket
 
-@admin_required
+@login.login_required
 def stats_all_ips():
 	ips = []
 	socket.setdefaulttimeout(2)
@@ -18,7 +18,7 @@ def stats_all_ips():
 	response.cache_control.no_cache = True
 	return response
 
-@admin_required
+@login.login_required
 def stats_for_ip(ip):
 	songlist = []
 	for song in Download.query.filter((Download.ip == ip) & (Download.leader_id == None)).order_by(Download.leader_id).order_by(db.desc(Download.time)):

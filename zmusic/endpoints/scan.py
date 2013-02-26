@@ -1,12 +1,12 @@
-from zmusic.login import admin_required
 from zmusic.database import db, Song
 from zmusic.picard.formats import open as readtags
 from zmusic.picard.util import encode_filename
 from flask import Response, current_app as app
+from flask.ext import login
 import time
 import os
 
-@admin_required
+@login.login_required
 def scan_music():
 	db.create_all();
 	def do_scan(root_path):

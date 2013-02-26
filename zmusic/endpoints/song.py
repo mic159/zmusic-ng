@@ -1,13 +1,13 @@
 from zmusic.database import Song, Download, db
-from zmusic.login import login_required
 from zmusic.streams import send_process, send_file_partial
 from zmusic.filename import generate_download_filename
 from zmusic.picard.file import MIMETYPES as mimetypes
 from flask import abort, request
+from flask.ext import login
 from werkzeug.datastructures import Headers
 import os
 
-@login_required
+@login.login_required
 def song(id, ext):
 	song = db.session.query(Song.id, Song.filename, Song.length, Song.mimetype, Song.artist, Song.album, Song.title, Song.track).filter(Song.id == id).first()
 	if song == None or not os.path.exists(song.filename):

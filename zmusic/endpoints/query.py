@@ -1,9 +1,9 @@
-from zmusic.login import login_required
 from zmusic.database import Song
 from flask import request, jsonify
+from flask.ext import login
 import shlex
 
-@login_required
+@login.login_required
 def query(query):
 	offset = request.args.get("offset", 0, int)
 	limit = request.args.get("limit", None, int)

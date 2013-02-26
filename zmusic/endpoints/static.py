@@ -1,6 +1,7 @@
 from flask import Response, send_from_directory, current_app as app
 from pkg_resources import resource_filename
 from mimetypes import guess_type
+from flask.ext import admin
 import os
 
 def serve_static(filename):
@@ -15,3 +16,7 @@ def serve_static(filename):
 		return response
 	else:
 		return send_from_directory(static_dir, filename)
+
+class AdminStatic(admin.AdminIndexView):
+	def is_accessible(self):
+		return False
